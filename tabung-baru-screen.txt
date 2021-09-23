@@ -1,0 +1,233 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:mobile_app_ijm_pelanggan/bloc/product/product_bloc.dart';
+import 'package:mobile_app_ijm_pelanggan/helpers/modaladdcartsucces.dart';
+import 'package:mobile_app_ijm_pelanggan/models/productmodels.dart';
+import 'package:mobile_app_ijm_pelanggan/widgets/buttonnavigation.dart';
+import 'package:mobile_app_ijm_pelanggan/widgets/constants.dart';
+
+class Body extends StatefulWidget {
+  const Body({Key? key}) : super(key: key);
+
+  @override
+  _BodyState createState() => _BodyState();
+}
+
+class _BodyState extends State<Body> {
+  String? _chosenSizeTabung;
+  String? _chosenNumberTabung;
+  List _refillMenu = ["0,5m\u00B3", '1m\u00B3', '2m\u00B3', '6m\u00B3'];
+  List _banyakTabung = ["1", '2', '3', '4'];
+
+  @override
+  Widget build(BuildContext context) {
+    final productBloc = BlocProvider.of<ProductBloc>(context);
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+    return Container(
+      width: screenWidth,
+      height: screenHeight,
+      padding: EdgeInsets.fromLTRB(15.w, 15.h, 15.w, 20.h),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [darkBlue, lightBlue, limeBlue],
+        ),
+      ),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: SafeArea(
+          child: Column(
+            children: [
+              Text(
+                'Refill/Isi Ulang',
+                style: GoogleFonts.poppins(
+                  fontSize: 25.sp,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(
+                height: 50.h,
+              ),
+              menuUkuranTabung(context),
+              SizedBox(
+                height: 25.h,
+              ),
+              menuBanyakTabung(context),
+              SizedBox(
+                height: 25.h,
+              ),
+              Container(
+                width: double.infinity,
+                height: 450.h,
+                padding: EdgeInsets.only(top: 20.h),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(25),
+                  ),
+                ),
+                child: Column(
+                  children: [
+                    Text(
+                      _chosenSizeTabung == null || _chosenNumberTabung == null
+                          ? 'Kamu belum buat pilihan'
+                          : 'Pesanan kamu tabung dengan ukuran $_chosenSizeTabung sebanyak $_chosenNumberTabung tabung\n\nSilahkan tambahkan foto tabung anda',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontSize: 15.sp, fontWeight: FontWeight.w200),
+                    ),
+                    SizedBox(
+                      height: 25.h,
+                    ),
+                    Container(
+                      alignment: Alignment.center,
+                      height: 200.h,
+                      width: 200.w,
+                      color: Colors.grey,
+                      child: GestureDetector(
+                        onTap: () {
+                          print('OK');
+                        },
+                        child: Text('Ketuk untuk upload foto'),
+                      ),
+                    ),
+                    Spacer(),
+                    ButtonNavigation(
+                        text: 'Pesan',
+                        press: _chosenNumberTabung != null &&
+                                _chosenSizeTabung != null
+                            ? () async {
+                                modalAddCartSuccess(context);
+
+                                final productselect = ProductCart(
+                                    namaProduk: 'refill $_chosenSizeTabung',
+                                    price: 45000,
+                                    amount: int.parse(_chosenNumberTabung!));
+                                productBloc.add(AddProductToCart(
+                                    product: productselect,
+                                    namaProduk: 'refill $_chosenSizeTabung'));
+
+                                await Future.delayed(Duration(seconds: 2));
+                                print(productselect.namaProduk);
+                                Navigator.pop(context);
+                                Navigator.of(context).pushNamed('/MenuScreen');
+                              }
+                            : null),
+                    Spacer(),
+                  ],
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Container menuBanyakTabung(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.45),
+            spreadRadius: 0,
+            blurRadius: 8,
+            offset: Offset(0, 4),
+          )
+        ],
+      ),
+      alignment: Alignment.center,
+      padding: EdgeInsets.symmetric(horizontal: 10.w),
+      width: 300.w,
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton(
+          isExpanded: true,
+          focusColor: Colors.white,
+          value: _chosenNumberTabung,
+          iconEnabledColor: Colors.black,
+          items: _banyakTabung.map(
+            (value) {
+              return DropdownMenuItem(
+                  child: Row(
+                    children: [
+                      Text(
+                        "Banyaknya Tabung:  $value",
+                        style: TextStyle(fontSize: 15.sp),
+                      ),
+                    ],
+                  ),
+                  value: value);
+            },
+          ).toList(),
+          hint: Text(
+            'Pilih Banyaknya Tabung ',
+          ),
+          onChanged: (value) {
+            FocusScope.of(context).unfocus();
+            setState(() {
+              _chosenNumberTabung = value as String?;
+            });
+          },
+        ),
+      ),
+    );
+  }
+
+  Container menuUkuranTabung(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.45),
+            spreadRadius: 0,
+            blurRadius: 8,
+            offset: Offset(0, 4),
+          )
+        ],
+      ),
+      alignment: Alignment.center,
+      padding: EdgeInsets.symmetric(horizontal: 10.w),
+      width: 300.w,
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton(
+          isExpanded: true,
+          focusColor: Colors.white,
+          value: _chosenSizeTabung,
+          iconEnabledColor: Colors.black,
+          items: _refillMenu.map(
+            (value) {
+              return DropdownMenuItem(
+                child: Row(
+                  children: [
+                    Text(
+                      "Ukuran Tabung:  $value",
+                      style: TextStyle(fontSize: 15.sp),
+                    ),
+                  ],
+                ),
+                value: value,
+              );
+            },
+          ).toList(),
+          hint: Text(
+            'Pilih Ukuran Tabung ',
+          ),
+          onChanged: (value) {
+            FocusScope.of(context).unfocus();
+            setState(() {
+              _chosenSizeTabung = value as String;
+            });
+          },
+        ),
+      ),
+    );
+  }
+}
