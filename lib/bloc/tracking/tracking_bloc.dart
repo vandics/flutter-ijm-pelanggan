@@ -113,7 +113,15 @@ class TrackingBloc extends Bloc<TrackingEvent, TrackingState> {
             rwo: rwo);
       }
     } catch (e) {
-      print('error');
+      yield state.copyWith(
+        products: [],
+        total: 0,
+        price: 0,
+        amount: 0,
+        status: status,
+        rwo: rwo,
+        nama: nama,
+      );
     }
   }
 }

@@ -97,7 +97,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
           product[event.index].namaProduk == 'Refill Tabung 1m\u00B3' ||
           product[event.index].namaProduk == 'Refill Tabung 2m\u00B3' ||
           product[event.index].namaProduk == 'Refill Tabung 6m\u00B3') {
-        final resp = await uploadImageController.deleteImageTabung(
+        await uploadImageController.deleteImageTabung(
           product[event.index].namaProduk!,
           event.namaUser,
         );
@@ -135,6 +135,6 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
         price: 0,
         id: [],
       );
-    } else if (event is SaveProductEvent) {}
+    }
   }
 }
