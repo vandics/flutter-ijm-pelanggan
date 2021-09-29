@@ -1,6 +1,6 @@
 # mobile_app_ijm_pelanggan
 
-A new Flutter project.
+Proyek pembuatan aplikasi jual-beli untuk perusahaan gas pt ijm, aplikasi ini menggunakan frontend flutter, backend nodejs, dan database mysql.
 
 ## Getting Started
 
