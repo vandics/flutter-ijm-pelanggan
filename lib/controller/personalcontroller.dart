@@ -13,15 +13,30 @@ class PersonalController {
       {required String username}) async {
     //final token = await authController.readToken() as String;
 
-    final resp = await http.post(
-      Uri.parse('$server/profile'),
-      headers: {
-        "content-type": "application/x-www-form-urlencoded",
-      },
-      body: {"username": username},
-    );
+    try {
+      final resp = await http.post(
+        Uri.parse('$server/profile'),
+        headers: {
+          "content-type": "application/x-www-form-urlencoded",
+        },
+        body: {"username": username},
+      );
 
-    return PersonalInformationResponse.fromJson(jsonDecode(((resp.body))));
+      return PersonalInformationResponse.fromJson(jsonDecode(((resp.body))));
+    } catch (e) {
+      return PersonalInformationResponse(
+        resp: false,
+        msj: e.toString(),
+        information: Information(
+          nama: 'none',
+          alamat: 'none',
+          instansi: 'none',
+          username: username,
+          telpon: 'none',
+          nomorpesan: 0,
+        ),
+      );
+    }
   }
 }
 

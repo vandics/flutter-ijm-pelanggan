@@ -15,23 +15,27 @@ class PersonalOrderController {
       required String image,
       required String kebutuhan,
       required String nominal}) async {
-    Map<String, dynamic> body = {
-      "nama": nama,
-      "rwo": norwo,
-      "status_pengisian": statusPengisian,
-      "status_transaksi": statusTransaksi,
-      "idTabung": idTabung,
-      "spesifikasi_tabung": spesifikasiTabung,
-      "image": image,
-      "kebutuhan": kebutuhan,
-      "nominal": nominal
-    };
-    print((body));
-    final resp = await http.post(Uri.parse('$server/upload-transaction'),
-        headers: {"content-type": "application/x-www-form-urlencoded"},
-        body: (body));
+    try {
+      Map<String, dynamic> body = {
+        "nama": nama,
+        "rwo": norwo,
+        "status_pengisian": statusPengisian,
+        "status_transaksi": statusTransaksi,
+        "idTabung": idTabung,
+        "spesifikasi_tabung": spesifikasiTabung,
+        "image": image,
+        "kebutuhan": kebutuhan,
+        "nominal": nominal
+      };
+      print((body));
+      final resp = await http.post(Uri.parse('$server/upload-transaction'),
+          headers: {"content-type": "application/x-www-form-urlencoded"},
+          body: (body));
 
-    return ResponseModels.fromJson(jsonDecode(resp.body));
+      return ResponseModels.fromJson(jsonDecode(resp.body));
+    } catch (e) {
+      return ResponseModels(resp: false, msj: e.toString());
+    }
   }
 }
 

@@ -7,15 +7,20 @@ class DatabaseController {
   var server = 'https://nodeapi.projectkitaid.com/user';
 
   Future<Databasetransaksi> getDataTransasksi(String nama) async {
-    final resp = await http.post(
-      Uri.parse('$server/history-transaction'),
-      headers: {
-        "content-type": "application/x-www-form-urlencoded",
-      },
-      body: {"nama": nama},
-    );
+    List<Information> temp = [];
+    try {
+      final resp = await http.post(
+        Uri.parse('$server/history-transaction'),
+        headers: {
+          "content-type": "application/x-www-form-urlencoded",
+        },
+        body: {"nama": nama},
+      );
 
-    return Databasetransaksi.fromJson(jsonDecode((resp.body)));
+      return Databasetransaksi.fromJson(jsonDecode((resp.body)));
+    } catch (e) {
+      return Databasetransaksi(resp: false, information: temp);
+    }
   }
 }
 

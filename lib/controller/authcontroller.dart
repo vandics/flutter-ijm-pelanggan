@@ -12,16 +12,25 @@ class AuthController {
 
   Future<AuthModel> login(
       {required String username, required String password}) async {
-    final body = {'username': username, 'paswordd': password};
-    final resp = await http.post(
-      Uri.parse('$server/login'),
-      headers: {
-        "content-type": "application/json",
-      },
-      body: jsonEncode(body),
-    );
+    try {
+      final body = {'username': username, 'paswordd': password};
+      final resp = await http.post(
+        Uri.parse('$server/login'),
+        headers: {
+          "content-type": "application/json",
+        },
+        body: jsonEncode(body),
+      );
 
-    return AuthModel.fromJson(jsonDecode(resp.body));
+      return AuthModel.fromJson(jsonDecode(resp.body));
+    } catch (e) {
+      return AuthModel(
+        resp: false,
+        msj: e.toString(),
+        users: Users(id: 0, users: 'none'),
+        token: '0',
+      );
+    }
   }
 
   Future<ResponseModels> createUser(
@@ -31,23 +40,27 @@ class AuthController {
       required String password,
       required String instansi,
       required String telpon}) async {
-    final body = {
-      'username': password,
-      'nama': nama, //benar
-      'instansi': alamat, //benar
-      'paswordd': instansi,
-      'telepon': telpon, // benar
-      'alamat': username // benar
-    };
-    final resp = await http.post(
-      Uri.parse('$server/register'),
-      headers: {
-        "content-type": "application/x-www-form-urlencoded",
-      },
-      body: (body),
-    );
+    try {
+      final body = {
+        'username': password,
+        'nama': nama, //benar
+        'instansi': alamat, //benar
+        'paswordd': instansi,
+        'telepon': telpon, // benar
+        'alamat': username // benar
+      };
+      final resp = await http.post(
+        Uri.parse('$server/register'),
+        headers: {
+          "content-type": "application/x-www-form-urlencoded",
+        },
+        body: (body),
+      );
 
-    return ResponseModels.fromJson(jsonDecode(resp.body));
+      return ResponseModels.fromJson(jsonDecode(resp.body));
+    } catch (e) {
+      return ResponseModels(resp: false, msj: e.toString());
+    }
   }
 
   Future<AuthModel> renewToken() async {
